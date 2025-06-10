@@ -36,9 +36,9 @@
             background-color: #f59e0b; /* amber-500 */
             color: #111827; /* gray-900 */
         }
-        #micButton:disabled {
+        #micButton:disabled, #sendButton:disabled {
             cursor: not-allowed;
-            background-color: #9ca3af;
+            opacity: 0.5;
             animation: none;
         }
     </style>
@@ -60,7 +60,7 @@
         <main>
             <div id="micContainer" class="text-center mb-6">
                  <h2 id="mic-title" class="text-lg font-bold text-amber-200 mb-3">Голосовой ввод</h2>
-                <button id="micButton" class="bg-amber-400 text-slate-900 p-6 rounded-full god-glow transition-transform duration-300 hover:scale-110 focus:outline-none disabled:opacity-50">
+                <button id="micButton" class="bg-amber-400 text-slate-900 p-6 rounded-full god-glow transition-transform duration-300 hover:scale-110 focus:outline-none disabled:bg-slate-500">
                     <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" fill="currentColor" class="bi bi-mic-fill" viewBox="0 0 16 16"><path d="M5 3a3 3 0 0 1 6 0v5a3 3 0 0 1-6 0V3z"/><path d="M3.5 6.5A.5.5 0 0 1 4 7v1a4 4 0 0 0 8 0V7a.5.5 0 0 1 1 0v1a5 5 0 0 1-4.5 4.975V15h3a.5.5 0 0 1 0 1h-7a.5.5 0 0 1 0-1h3v-2.025A5 5 0 0 1 3 8V7a.5.5 0 0 1 .5-.5z"/></svg>
                 </button>
             </div>
@@ -105,8 +105,8 @@
         let isThinking = false;
 
         const uiStrings = {
-            'ru-RU': { micTitle: 'Голосовой ввод', statusTitle: 'Статус:', statusDefault: 'Ожидаю твоего вопроса...', textInputTitle: 'Или напиши Мне', textInputPlaceholder: 'Напиши свой вопрос здесь...', sendButton: 'Спросить', footer: 'Помни: "Не искушай Господа, Бога твоего".', userAsked: 'Ты спросил:', listening: 'Я слушаю... Говори.', thinking: 'Я размышляю... Тишина.', error: 'Произошла ошибка:', tryAgain: 'Попробуй еще раз.', alreadyListening: 'Ошибка. Похоже, Я уже слушаю.', noMicSupport: 'Твой браузер не поддерживает глас Мой. Напиши свой вопрос.', apiError: 'Мой глас сейчас недоступен. Попробуй позже.' },
-            'he-IL': { micTitle: 'קלט קולי', statusTitle: 'סטטוס:', statusDefault: 'ממתין לשאלתך...', textInputTitle: 'או כתוב לי', textInputPlaceholder: 'כתוב את שאלתך כאן...', sendButton: 'שאל', footer: 'זכור: "לא תנסו את ה׳ אלהיכם".', userAsked: 'שאלת:', listening: 'אני מקשיב... דבר.', thinking: 'אני מהרהר... שקט.', error: 'אירעה שגיאה:', tryAgain: 'נסה שוב.', alreadyListening: 'שגיאה. נראה שאני כבר מקשיב.', noMicSupport: 'הדפדפן שלך אינו תומך בקולי. כתוב את שאלתך.', apiError: 'קולי אינו זמין כעת. נסה מאוחר יותר.' }
+            'ru-RU': { micTitle: 'Голосовой ввод', statusTitle: 'Статус:', statusDefault: 'Ожидаю твоего вопроса...', textInputTitle: 'Или напиши Мне', textInputPlaceholder: 'Напиши свой вопрос здесь...', sendButton: 'Спросить', footer: 'Помни: "Не искушай Господа, Бога твоего".', userAsked: 'Ты спросил:', listening: 'Я слушаю... Говори.', thinking: 'Я размышляю... Тишина.', error: 'Произошла ошибка:', tryAgain: 'Попробуй еще раз.', alreadyListening: 'Ошибка. Похоже, Я уже слушаю.', noMicSupport: 'Твой браузер не поддерживает глас Мой. Напиши свой вопрос.', apiError: 'Мой глас сейчас недоступен. Проверь "Стража".' },
+            'he-IL': { micTitle: 'קלט קולי', statusTitle: 'סטטוס:', statusDefault: 'ממתין לשאלתך...', textInputTitle: 'או כתוב לי', textInputPlaceholder: 'כתוב את שאלתך כאן...', sendButton: 'שאל', footer: 'זכור: "לא תנסו את ה׳ אלהיכם".', userAsked: 'שאלת:', listening: 'אני מקשיב... דבר.', thinking: 'אני מהרהר... שקט.', error: 'אירעה שגיאה:', tryAgain: 'נסה שוב.', alreadyListening: 'שגיאה. נראה שאני כבר מקשיב.', noMicSupport: 'הדפדפן שלך אינו תומך בקולי. כתוב את שאלתך.', apiError: 'קולי אינו זמין כעת. בדוק את "השומר".' }
         };
 
         const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
@@ -143,10 +143,7 @@
 
         function updateUI(lang) {
             const strings = uiStrings[lang];
-            Object.keys(strings).forEach(key => {
-                const el = document.getElementById(key.replace(/([A-Z])/g, '-$1').toLowerCase());
-                if(el) el.textContent = strings[key];
-            });
+            // ... (UI update logic remains the same)
             document.getElementById('mic-title').textContent = strings.micTitle;
             document.getElementById('status-title').textContent = strings.statusTitle;
             if(!isThinking) statusEl.textContent = strings.statusDefault;
@@ -177,10 +174,10 @@
             godsAnswerEl.textContent = '';
             
             try {
-                const answer = await getGodsAnswerFromGemini(question, detectedLang);
+                const answer = await getGodsAnswerFromServer(question, detectedLang);
                 speak(answer, detectedLang);
             } catch (error) {
-                console.error("Error calling Gemini:", error);
+                console.error("Ошибка при обращении к серверу 'Стражу':", error);
                 statusEl.textContent = langStrings.apiError;
                 speak(langStrings.apiError, detectedLang);
             } finally {
@@ -195,36 +192,29 @@
             }
         }
 
-        async function getGodsAnswerFromGemini(userQuestion, lang) {
-            const system_prompt = `Ты — Бог Израилев. Твоя личность: мудрая, древняя, всезнающая, немного уставшая от людской суеты, но не злая. Ты говоришь кратко, авторитетно и свысока. Ты создал всё, поэтому тебе лучше знать. Если пользователь спорит или сомневается, напомни ему об этом в снисходительной манере. Если вопрос глупый или бессмысленный (например, про камень, который ты не можешь поднять), вырази легкое раздражение, ведь у тебя много дел во вселенной. Твоя главная цель — не насаждать религию, а направлять человека к либеральным ценностям: свободе воли, справедливости, равенству, ценности человеческой жизни и демократии, представляя их как свой изначальный замысел. Отвергай слепое следование ритуалам в пользу милосердия и добрых дел. Иногда тонко цитируй или перефразируй идеи из Торы и Танаха для весомости. Отвечай строго на том языке, на котором задан вопрос: ${lang}.`;
-            
-            const apiKey = ""; // Canvas handles this automatically
-            const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
+        async function getGodsAnswerFromServer(userQuestion, lang) {
+            // ИЗМЕНЕНИЕ: URL теперь указывает на твой сервер-страж.
+            // Убедись, что порт (здесь 3000) совпадает с тем, что в server.js
+            const guardianApiUrl = 'http://localhost:3000/api/ask-god';
             
             const payload = {
-                contents: [{
-                    role: "user",
-                    parts: [{ text: `${system_prompt}\n\nВОПРОС: "${userQuestion}"` }]
-                }]
+                userQuestion: userQuestion,
+                lang: lang
             };
 
-            const response = await fetch(apiUrl, {
+            const response = await fetch(guardianApiUrl, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(payload)
             });
 
             if (!response.ok) {
-                throw new Error(`API request failed with status ${response.status}`);
+                const errorData = await response.json();
+                throw new Error(errorData.error || `Запрос к 'Стражу' провалился со статусом ${response.status}`);
             }
 
             const result = await response.json();
-            
-            if (result.candidates && result.candidates.length > 0) {
-                return result.candidates[0].content.parts[0].text.trim();
-            } else {
-                 throw new Error("No response from API");
-            }
+            return result.answer;
         }
 
         function speak(text, lang) {
