@@ -43,32 +43,3 @@ app.post('/api/ask-god', async (req, res) => {
 // Vercel сам позаботится о запуске, поэтому app.listen не нужен.
 // Просто экспортируем приложение.
 module.exports = app;
-
-public/index.html
-Это код твоего приложения ("Посланника"). Единственное важное изменение — в функции getGodsAnswerFromServer URL для запроса теперь относительный: /api/ask-god. Vercel поймет, куда его направить.
-
-Скопируй сюда код из артефакта god-app-ru, но замени в нем функцию getGodsAnswerFromServer на эту:
-
-async function getGodsAnswerFromServer(userQuestion, lang) {
-    // ИЗМЕНЕНИЕ: URL теперь относительный и указывает на наш API-маршрут в Vercel
-    const guardianApiUrl = '/api/ask-god';
-    
-    const payload = {
-        userQuestion: userQuestion,
-        lang: lang
-    };
-
-    const response = await fetch(guardianApiUrl, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload)
-    });
-
-    if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.error || `Запрос к 'Стражу' провалился со статусом ${response.status}`);
-    }
-
-    const result = await response.json();
-    return result.answer;
-}
