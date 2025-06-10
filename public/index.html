@@ -192,30 +192,30 @@
             }
         }
 
-        async function getGodsAnswerFromServer(userQuestion, lang) {
-            // ИЗМЕНЕНИЕ: URL теперь указывает на твой сервер-страж.
-            // Убедись, что порт (здесь 3000) совпадает с тем, что в server.js
-            const guardianApiUrl = 'http://localhost:3000/api/ask-god';
+    async function getGodsAnswerFromServer(userQuestion, lang) {
+    // ИЗМЕНЕНИЕ: URL теперь относительный и указывает на наш API-маршрут в Vercel
+    const guardianApiUrl = '/api/ask-god';
+    
+    const payload = {
+        userQuestion: userQuestion,
+        lang: lang
+    };
+
+    const response = await fetch(guardianApiUrl, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+    });
+
+    if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || `Запрос к 'Стражу' провалился со статусом ${response.status}`);
+    }
+
+    const result = await response.json();
+    return result.answer;
             
-            const payload = {
-                userQuestion: userQuestion,
-                lang: lang
-            };
-
-            const response = await fetch(guardianApiUrl, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(payload)
-            });
-
-            if (!response.ok) {
-                const errorData = await response.json();
-                throw new Error(errorData.error || `Запрос к 'Стражу' провалился со статусом ${response.status}`);
-            }
-
-            const result = await response.json();
-            return result.answer;
-        }
+          
 
         function speak(text, lang) {
             if (speechSynthesis.speaking) { speechSynthesis.cancel(); }
